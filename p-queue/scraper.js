@@ -1,10 +1,11 @@
 const puppeteer = require("puppeteer");
 
+const profileStore = require("data-store")({
+  path: process.cwd() + "/data/profile.json"
+});
 
-async function test(url) {
-  let browser;
+async function test(url, browser) {
   try {
-    browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     await page.goto(url);
     const title = await page.title();
@@ -30,7 +31,9 @@ async function test(url) {
         stars: starCount
       };
     });
-    console.log({ profileDetails });
+    profileStore.union("profiles", profileDetails);
+
+    await page.close();
   } catch (error) {
     await browser.close();
   }
