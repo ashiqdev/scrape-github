@@ -8,6 +8,9 @@ const profileStore = require("data-store")({
   path: process.cwd() + "/data/profile.json"
 });
 
+const Queue = require("bull");
+const scraperQueue = new Queue("github scraper");
+
 class Personal extends Github {
   constructor(links) {
     super();
@@ -18,6 +21,7 @@ class Personal extends Github {
     this.log("naviagating single profile...");
     for (let link of this.links) {
       try {
+        scraperQueue.add({ link });
         await this.scrapeActualData(link);
       } catch (err) {
         console.log(err);
