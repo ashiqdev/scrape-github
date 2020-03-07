@@ -1,5 +1,9 @@
 const Github = require("./super");
 
+const { default: PQueue } = require("p-queue");
+
+const queue = new PQueue({ concurrency: 3 });
+
 const linkStore = require("data-store")({
   path: process.cwd() + "/data/links.json"
 });
@@ -21,7 +25,7 @@ class Personal extends Github {
     this.log("naviagating single profile...");
     for (let link of this.links) {
       try {
-        scraperQueue.add({ link });
+        // queue.add(async () => await this.scrapeActualData(link))
         await this.scrapeActualData(link);
       } catch (err) {
         console.log(err);

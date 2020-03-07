@@ -4,6 +4,8 @@ const profileStore = require("data-store")({
   path: process.cwd() + "/data/profile.json"
 });
 
+const Profile = require("./models");
+
 async function test(url, browser) {
   try {
     const page = await browser.newPage();
@@ -31,7 +33,14 @@ async function test(url, browser) {
         stars: starCount
       };
     });
-    profileStore.union("profiles", profileDetails);
+
+    // profileStore.union("profiles", profileDetails);
+    const profile = new Profile({
+      name: profileDetails.name,
+      repos: profileDetails.repos,
+      stars: profileDetails.startCount
+    });
+    await profile.save();
 
     await page.close();
   } catch (error) {
